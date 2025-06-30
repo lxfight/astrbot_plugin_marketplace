@@ -4,8 +4,8 @@ WORKDIR /usr/src/app
 
 # ---- Dependencies Stage ----
 FROM base AS dependencies
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile
+COPY package.json ./
+RUN npm install
 
 # ---- Build Stage ----
 FROM base AS builder
