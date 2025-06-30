@@ -57,19 +57,27 @@ export class AuthTokenManager {
   }
 
   static redirectToLogin(): void {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    if (!API_BASE_URL) {
+      console.error('API base URL is not configured.');
+      // Optionally, handle this error more gracefully, e.g., show a message to the user
+      return;
+    }
     window.location.href = `${API_BASE_URL}/auth/github/login`;
   }
 }
 
 // HTTP client with automatic token handling
 export class ApiClient {
-  private static baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+  private static baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   static async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    if (!this.baseURL) {
+      throw new Error('API base URL is not configured.');
+    }
     const token = AuthTokenManager.getToken();
 
     const config: RequestInit = {

@@ -16,7 +16,9 @@ export class AuthController {
     @Get('github/login')
     githubLogin(@Res() res: Response) {
         const GITHUB_CLIENT_ID = this.configService.get<string>('GITHUB_CLIENT_ID');
-        const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=repo,user:email`;
+        const backendUrl = this.configService.get<string>('API_URL');
+        const redirect_uri = `${backendUrl}/auth/github/callback`;
+        const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=repo,user:email&redirect_uri=${encodeURIComponent(redirect_uri)}`;
         res.redirect(url);
     }
 
@@ -26,7 +28,10 @@ export class AuthController {
       @Res() res: Response,
     ) {
       const { accessToken } = await this.authService.githubLogin(code);
-      const frontendUrl = this.configService.get<string>('APP_URL', 'http://localhost:3000');
+      const frontendUrl = this.configService.get<string>('APP_URL');
+      if (!frontendUrl) {
+        throw new Error('APP_URL is not defined in environment variables');
+      }
       // Redirect to the frontend dashboard with the token
       res.redirect(`${frontendUrl}/dashboard?token=${accessToken}`);
     }

@@ -10,11 +10,14 @@ async function bootstrap() {
   });
 
   const configService = app.get(ConfigService);
-  const frontendUrl = configService.get<string>('APP_URL', 'http://localhost:3000');
+  const frontendUrl = configService.get<string>('APP_URL');
+  if (!frontendUrl) {
+    throw new Error('APP_URL is not defined in environment variables');
+  }
 
   // Configure CORS with specific origins for security
   app.enableCors({
-    origin: [frontendUrl, 'http://localhost:3000'], // Allow both configured and dev URLs
+    origin: frontendUrl,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Hub-Signature-256', 'X-GitHub-Event'],

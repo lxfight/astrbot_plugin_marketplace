@@ -140,12 +140,12 @@ export default function TestAuthPage() {
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">You are not logged in.</p>
-              <a
-                href="http://localhost:3001/auth/github/login"
+              <button
+                onClick={() => AuthAPI.redirectToLogin()}
                 className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition-colors"
               >
                 Login with GitHub
-              </a>
+              </button>
             </div>
           )}
         </div>

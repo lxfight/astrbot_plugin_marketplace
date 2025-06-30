@@ -36,6 +36,8 @@ export class AuthService {
 
   private async getGithubAccessToken(code: string): Promise<string> {
     const url = 'https://github.com/login/oauth/access_token';
+    const backendUrl = this.configService.get<string>('API_URL');
+    const redirect_uri = `${backendUrl}/auth/github/callback`;
     try {
       const response = await firstValueFrom(
         this.httpService.post(
@@ -46,6 +48,7 @@ export class AuthService {
               'GITHUB_CLIENT_SECRET',
             ),
             code,
+            redirect_uri,
           },
           {
             headers: { Accept: 'application/json' },
